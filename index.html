@@ -1,21 +1,37 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html>
-  <head>
-      <meta charset="utf-8" />
-      <title>mapboxgl.js + d3.js tutorial - 01</title>
-      <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-      <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
-      <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
-      <script src="polylabel.js"></script>
-      <script src="jquery-3.4.1.min.js"></script>
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js" charset="utf-8"></script>
+<head>
+    <meta charset="utf-8" />
+    <title>mapboxgl.js + d3.js tutorial - 01</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
+    <script src="polylabel.js"></script>
+    <script src="jquery-3.4.1.min.js"></script>
 
-      <style media="screen">
-          body { margin:0; padding:0; }
-          #map { position:absolute; top:0; bottom:0; width:100%; }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js" charset="utf-8"></script>
 
-          /* svg {
+    <style media="screen">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .picto {
+            display: block;
+            width: 30px;
+            height: 120px;
+        }
+
+        /* svg {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -35,23 +51,29 @@
             border-radius: 50%;
             cursor: pointer;
         } */
+    </style>
 
-      </style>
-      
-  </head>
-  
-  <body>
+</head>
+
+<body>
     <div id="map">
     </div>
     <script>
+        var bounds = [
+            [-7.098354, 52.919154], // Southwest coordinates
+            [-5.578933, 53.820955] // Northeast coordinates
+        ];
 
         // Set-up map
-    	mapboxgl.accessToken = 'pk.eyJ1Ijoiam9yZGl0b3N0IiwiYSI6ImQtcVkyclEifQ.vwKrOGZoZSj3N-9MB6FF_A';
+        mapboxgl.accessToken =
+            'pk.eyJ1IjoiZGF0YXRocmlsbHMiLCJhIjoiY2p4b3Ftamo0MDFiazNtcjh3OGQxZXR3NiJ9.vVCJqC2SS9qE6Vi227YMTQ';
         var map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/light-v10',
+            style: 'mapbox://styles/datathrills/cjxp3oef90zh21co5h1m8lkgx',
             zoom: 16,
             center: [-6.256779999993682, 53.34395399102701],
+            //minZoom: 10,
+            maxBounds: bounds // Sets bounds as max
             //pitch: 40
         });
 
@@ -59,9 +81,15 @@
 
         // filters for classifying icons into five categories based on age
         var mag1 = ["<", ["get", "test_data_AGE"], 20];
-        var mag2 = ["all", [">=", ["get", "test_data_AGE"], 20], ["<", ["get", "test_data_AGE"], 30]];
-        var mag3 = ["all", [">=", ["get", "test_data_AGE"], 30], ["<", ["get", "test_data_AGE"], 40]];
-        var mag4 = ["all", [">=", ["get", "test_data_AGE"], 40], ["<", ["get", "test_data_AGE"], 50]];
+        var mag2 = ["all", [">=", ["get", "test_data_AGE"], 20],
+            ["<", ["get", "test_data_AGE"], 30]
+        ];
+        var mag3 = ["all", [">=", ["get", "test_data_AGE"], 30],
+            ["<", ["get", "test_data_AGE"], 40]
+        ];
+        var mag4 = ["all", [">=", ["get", "test_data_AGE"], 40],
+            ["<", ["get", "test_data_AGE"], 50]
+        ];
         var mag5 = [">=", ["get", "test_data_AGE"], 50];
 
         // colors to use for the categories
@@ -69,7 +97,7 @@
 
         //Map is loaded
         map.on('load', function () {
-            
+
             // Add GeoJSON source from GeoJSON file
             // map.addSource("smallArea", {
             //     "type": "geojson",
@@ -82,15 +110,22 @@
                 "data": "final_test_data.json",
                 "cluster": true,
                 "clusterRadius": 80,
-                "clusterProperties": { //keep separate counts for each age category in a cluster
-                    "mag1": ["+", ["case", mag1, 1, 0]],
-                    "mag2": ["+", ["case", mag2, 1, 0]],
-                    "mag3": ["+", ["case", mag3, 1, 0]],
-                    "mag4": ["+", ["case", mag4, 1, 0]],
-                    "mag5": ["+", ["case", mag5, 1, 0]]
+                "clusterProperties": {
+                    "age": ["+", ["get", "test_data_AGE"]],
+                    "culture_1": ["+", ["get", "test_data_BIRTH_IR"]],
+                    "culture_2": ["+", ["get", "test_data_BIRTH_EUR"]],
+                    "culture_3": ["+", ["get", "test_data_BIRTH_WOR"]]
                 }
+
+                // "clusterProperties": { //keep separate counts for each age category in a cluster
+                //     "mag1": ["+", ["case", mag1, 1, 0]],
+                //     "mag2": ["+", ["case", mag2, 1, 0]],
+                //     "mag3": ["+", ["case", mag3, 1, 0]],
+                //     "mag4": ["+", ["case", mag4, 1, 0]],
+                //     "mag5": ["+", ["case", mag5, 1, 0]]
+                // }
             });
-            
+
             // Add layer with boundaries
             // map.addLayer({
             //     "id": "smallAreaLayer",
@@ -102,39 +137,63 @@
             //     }
             // });
 
-            
+
             // Circle and symbol layers for rendering individual earthquakes (unclustered points)
-            map.addLayer({
-                "id": "smallAreaDataLayer",
-                "type": "circle",
-                "source": "smallAreaData",
-                "paint": {
-                    "circle-color": 
-                        ["case",
-                        mag1, colors[0],
-                        mag2, colors[1],
-                        mag3, colors[2],
-                        mag4, colors[3], 
-                        colors[4]],
-                        "circle-opacity": 0.6,
-                        "circle-radius": 20
-                }
-            });
+            // map.addLayer({
+            //     "id": "smallAreaDataLayer",
+            //     "type": "circle",
+            //     "source": "smallAreaData",
+            //     "filter": ["!=", "cluster", true],
+            //     "paint": {
+            //         "circle-color": ["case",
+            //             mag1, colors[0],
+            //             mag2, colors[1],
+            //             mag3, colors[2],
+            //             mag4, colors[3],
+            //             colors[4]
+            //         ],
+            //         "circle-opacity": 0.6,
+            //         "circle-radius": 20
+            //     }
+            // });
+
+            // map.addLayer({
+            //     "id": "earthquake_label",
+            //     "type": "symbol",
+            //     "source": "smallAreaData",
+            //     "filter": ["!=", "cluster", true],
+            //     "layout": {
+            //         "text-field": ["number-format", ["get", "test_data_AGE"], {
+            //             "min-fraction-digits": 0,
+            //             "max-fraction-digits": 0
+            //         }],
+            //         "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+            //         "text-size": 10
+            //     },
+            //     "paint": {
+            //         "text-color": ["case", ["<", ["get", "test_data_AGE"], 3], "black", "white"]
+            //     }
+            // });
+
+            // define layer that take [lon, lat] as input (circle type)
+            // map.addLayer({
+            //     "id": "smallAreaDataLayer",
+            //     "filter": ["!=", "cluster", true],
+            //     "type": "circle",
+            //     "source": "smallAreaData",
+            //     "paint" : {
+            //         "circle-opacity": 0.6,
+            //         "circle-radius": 20
+            //     }
+            // });
 
             map.addLayer({
-                "id": "earthquake_label",
-                "type": "symbol",
-                "source": "smallAreaData",
-                "filter": ["!=", "cluster", true],
-                "layout": {
-                "text-field": ["number-format", ["get", "test_data_AGE"], {"min-fraction-digits": 1, "max-fraction-digits": 1}],
-                "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                "text-size": 10
-                },
-                "paint": {
-                "text-color": ["case", ["<", ["get", "test_data_AGE"], 3], "black", "white"]
-                }
+                "id": "smallAreaDataLayer",
+                "type": "fill",
+                "source": "smallAreaData"
             });
+
+            //map.removeLayer(smallAreaDataLayer);
 
             // objects for caching and keeping track of HTML marker objects (for performance)
             var markers = {};
@@ -144,90 +203,199 @@
                 var newMarkers = {};
                 var features = map.querySourceFeatures('smallAreaData');
                 
+
                 // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
                 // and add it to the map if it's not there already
+                
                 for (var i = 0; i < features.length; i++) {
-                    var coords = features[i].geometry.coordinates;
+                    var coords = features[i].geometry.coordinates; // coordinates
                     var props = features[i].properties;
-                    if (!props.cluster) continue;
-                    var id = props.cluster_id;
-                
-                    var marker = markers[id];
-                    if (!marker) {
-                        var el = createDonutChart(props);
-                        marker = markers[id] = new mapboxgl.Marker({element: el}).setLngLat(coords);
-                    }
-                    newMarkers[id] = marker;
-                
-                    if (!markersOnScreen[id])
+
+                    //console.log(props);
+
+                    
+
+
+                    //if (!props.cluster) continue;
+                    // if it's not a cluster
+                    if (!props.cluster) {
+
+
+                        //data
+                        var age = props.test_data_AGE;
+                        var culture = [props.test_data_BIRTH_IR, props.test_data_BIRTH_EUR, props.test_data_BIRTH_WOR];
+                        var economy = [props.test_data_ECO_WORK, props.test_data_ECO_UNE, props.test_data_ECO_OTH];
+                        var price = props.test_data_DUMMY_PRICE;
+                        
+                        var id = props.OBJECTID;
+                        var marker = markers[id];
+
+                        if (!marker) {
+                            var el = createHead(age, culture);
+                            
+                            marker = markers[id] = new mapboxgl.Marker({
+                                element: el
+                            }).setLngLat(coords);
+                        }
+
+                        newMarkers[id] = marker;
+                        if (!markersOnScreen[id])
                         marker.addTo(map);
-                    }
-                
-                    // for every marker we've added previously, remove those that are no longer visible
-                    for (id in markersOnScreen) {
-                        if (!newMarkers[id])
-                        markersOnScreen[id].remove();
-                    }
-                    markersOnScreen = newMarkers;
+
+                    // if it is a cluster
+                    } else {
+                        var id = props.cluster_id;
+                        
+                        var average_age = Math.round (props.age / props.point_count_abbreviated);
+                        var fake_culture = [30, 40, 30];
+
+
+                        var marker = markers[id];
+                        if (!marker) {
+                            //var el = createDonutChart(props); ///!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            var el = createHead(average_age, fake_culture);
+                            marker = markers[id] = new mapboxgl.Marker({
+                                element: el
+                            }).setLngLat(coords);
+                        }
+                        newMarkers[id] = marker;
+
+                        if (!markersOnScreen[id])
+                            marker.addTo(map);
+                    }  
                 }
-                
-                // after the GeoJSON data is loaded, update markers on the screen and do so on every map move/moveend
-                map.on('data', function (e) {
+
+                // for every marker we've added previously, remove those that are no longer visible
+                for (id in markersOnScreen) {
+                    if (!newMarkers[id])
+                        markersOnScreen[id].remove();
+                }
+
+                markersOnScreen = newMarkers;
+            }
+
+            // after the GeoJSON data is loaded, update markers on the screen and do so on every map move/moveend
+            map.on('data', function (e) {
+                // exit the function 'smallAreaData' isn't loaded
                 if (e.sourceId !== 'smallAreaData' || !e.isSourceLoaded) return;
-                
+
                 map.on('move', updateMarkers);
                 map.on('moveend', updateMarkers);
                 updateMarkers();
-                });
+            });
         });
+
+        function hair_color(age){
+            var colors = ['#35281D', '#4F3C2D', '#7C5E48', '#A38067', '#C9A88F', '#D8D8D8']
+            var result = age >= 60 ? colors[5] : age >= 50 ? colors[4] : age >= 40 ? colors[3] : age >= 30 ? colors[2] : age >= 20 ? colors[1] : colors[0];
+            return result;
+        };
+
+
+
+        function bar_chart(culture){
+            var colors = ['#00a128', '#003ba1', '#c202bf']
+            var adjusted_values = culture.map(n => {
+                return (n/100)*142
+            });
+            //console.log(adjusted_values[2])
+
+
+            var first = '<rect id="front_first" x="37" y="'+ (186 + 142 - adjusted_values[0]) +'" fill="' + colors[0] + '" width="83" height="' + adjusted_values[0] + '"/>';
+            var second = '<rect id="front_first" x="37" y="'+ (186 + 142 - adjusted_values[0] - adjusted_values[1]) + '" fill="' + colors[1] + '" width="83" height="' + adjusted_values[1] +'"/>';
+            var third = '<rect id="front_first" x="37" y="'+ 186 + '" fill="' + colors[2] + '" width="83" height="' + adjusted_values[2] +'"/>';
+            var result = first + second + third;
+            //console.log(result);
+
+            return result
+        }
+
+
+        // code for building people-icons
+        function createHead(age, culture){
+
+           
+            var svg = '<svg class="picto" version="1.1" id="person" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 160 461.3" enable-background="new 0 0 160 461.3" xml:space="preserve">';
+
+            var torzo = '<path id="torzo" fill="#A59656" d="M136.5,374.4h-115c-6.6,0-12-5.4-12-12v-192c0-6.6,5.4-12,12-12h115c6.6,0,12,5.4,12,12v192 C148.5,369,143.1,374.4,136.5,374.4z"/>';
+
+            var skull = '<ellipse id="skull" fill="#F9DBBD" cx="79.3" cy="98.9" rx="69.5" ry="69.6"/>';
+            var nose = '<path id="nose" opacity="0.54" fill="none" stroke="#C19167" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" d="M75.6,90.9c0,0,17.9,29.1,7.9,29.1c-4,0-9.5,0-9.5,0"/>';
+
+	        var eye_l = '<circle id="eye_left" fill="#848484" cx="47.9" cy="90.3" r="3.9"/>';
+            var eye_r = '<circle id="eye_x5F_right" fill="#848484" cx="105.9" cy="90.3" r="3.9"/>';
+            
+            var mouth = '<line id="mouth" opacity="0.54" fill="none" stroke="#C19167" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="63" y1="141" x2="95" y2="141"/>';
+    
+            var hair = '<polygon id="hair" fill="' + hair_color(age) + '" points="44.7,26.8 25.9,32.1 35.4,39.9 16,50 22.3,58 0,76 22,76 53,62 77.3,65 99,58 114,58 140.8,76 160,85 139,56 160,48 129,40.9 153,32 114,32 120,18 99,28 80,18 83.5,32.3 60,13 60,32 41,4 	"/>';
+
+            var leg_l = '<rect id="leg_left" x="37.3" y="374.4" fill="#A59656" width="25.7" height="87"/>';
+            var leg_r = '<rect id="leg_x5F_right" x="95" y="374.4" fill="#A59656" width="25.7" height="87"/>';
+
+            var front = bar_chart(culture);
+
+            //</svg>
+
+            var html = '<svg class="picto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 150"><path d="m 22.89792,1.4650345 c 2.42219,-1.95337934 5.860138,-1.95337934 8.282328,0 2.031515,1.6408387 3.984894,4.2974346 3.984894,8.516734 0,8.5948695 -2.42219,16.9553325 -2.42219,16.9553325 h 11.720276 c 0,0 6.016408,0.937622 6.016408,7.422842 v 40.63029 c 0,0 0.468811,5.938273 -6.95403,12.423493 l 0.234405,57.820024 c 0,0 4.063029,1.17203 4.063029,4.76625 H 6.1769924 c 0,-3.59422 4.0630286,-4.76625 4.0630286,-4.76625 L 10.474427,87.413726 C 3.0515854,80.928506 3.5203965,74.990233 3.5203965,74.990233 v -40.63029 c 0,-6.48522 6.0164084,-7.422842 6.0164084,-7.422842 H 21.257081 c 0,0 -2.42219,-8.360463 -2.42219,-16.9553325 0.07813,-4.2192994 2.031514,-6.8758953 4.063029,-8.516734 z" style="fill:#1d498f;stroke-width:0.3"/></svg>'
+
+            var el = document.createElement('div');
+            el.innerHTML = svg + torzo + skull + nose + eye_l + eye_r + mouth + hair + leg_l + leg_r + front + '</svg>';
+            return el.firstChild;
+        }
+
 
         // code for creating an SVG donut chart from feature properties
         function createDonutChart(props) {
             var offsets = [];
             var counts = [props.mag1, props.mag2, props.mag3, props.mag4, props.mag5];
+            //console.log("counts: " + counts);
             var total = 0;
-            
+
             for (var i = 0; i < counts.length; i++) {
                 offsets.push(total);
                 total += counts[i];
             }
-            
-            var fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
-            var r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+            //console.log("offset: " + offsets);
+
+            var fontSize = 16;
+            var r = 32;
             var r0 = Math.round(r * 0.6);
             var w = r * 2;
-            
+
             var html = '<svg width="' + w + '" height="' + w + '" viewbox="0 0 ' + w + ' ' + w +
-            '" text-anchor="middle" style="font: ' + fontSize + 'px sans-serif">';
-            
+                '" text-anchor="middle" style="font: ' + fontSize + 'px sans-serif">';
+
             for (i = 0; i < counts.length; i++) {
                 html += donutSegment(offsets[i] / total, (offsets[i] + counts[i]) / total, r, r0, colors[i]);
             }
-            
+
             html += '<circle cx="' + r + '" cy="' + r + '" r="' + r0 +
-            '" fill="white" /><text dominant-baseline="central" transform="translate(' +
-            r + ', ' + r + ')">' + total.toLocaleString() + '</text></svg>';
-            
+                '" fill="white" /><text dominant-baseline="central" transform="translate(' +
+                r + ', ' + r + ')">' + total.toLocaleString() + '</text></svg>';
+
             var el = document.createElement('div');
             el.innerHTML = html;
             return el.firstChild;
         }
-            
+
         function donutSegment(start, end, r, r0, color) {
             if (end - start === 1) end -= 0.00001;
             var a0 = 2 * Math.PI * (start - 0.25);
             var a1 = 2 * Math.PI * (end - 0.25);
-            var x0 = Math.cos(a0), y0 = Math.sin(a0);
-            var x1 = Math.cos(a1), y1 = Math.sin(a1);
+            var x0 = Math.cos(a0),
+                y0 = Math.sin(a0);
+            var x1 = Math.cos(a1),
+                y1 = Math.sin(a1);
             var largeArc = end - start > 0.5 ? 1 : 0;
-            
-            return ['<path d="M', r + r0 * x0, r + r0 * y0, 'L', r + r * x0, r + r * y0,
-            'A', r, r, 0, largeArc, 1, r + r * x1, r + r * y1,
-            'L', r + r0 * x1, r + r0 * y1, 'A',
-            r0, r0, 0, largeArc, 0, r + r0 * x0, r + r0 * y0,
-            '" fill="' + color + '" />'].join(' ');
-        }
 
+            return ['<path d="M', r + r0 * x0, r + r0 * y0, 'L', r + r * x0, r + r * y0,
+                'A', r, r, 0, largeArc, 1, r + r * x1, r + r * y1,
+                'L', r + r0 * x1, r + r0 * y1, 'A',
+                r0, r0, 0, largeArc, 0, r + r0 * x0, r + r0 * y0,
+                '" fill="' + color + '" />'
+            ].join(' ');
+        }
     </script>
-  </body>
+</body>
+
 </html>
