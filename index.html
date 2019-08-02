@@ -7,8 +7,7 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
-    <script src="polylabel.js"></script>
-    <script src="jquery-3.4.1.min.js"></script>
+    <!-- <script src="jquery-3.4.1.min.js"></script> -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js" charset="utf-8"></script>
 
@@ -26,9 +25,9 @@
         }
 
         .picto {
-            display: block;
-            width: 30px;
-            height: 120px;
+            display: block; 
+            width: 88.1px;
+            height: 103.8px;
         }
 
         /* svg {
@@ -107,9 +106,9 @@
             // Add GeoJSON source from GeoJSON file
             map.addSource("smallAreaData", {
                 "type": "geojson",
-                "data": "final_test_data.json",
+                "data": "real_final_data.geojson",
                 "cluster": true,
-                "clusterRadius": 80,
+                "clusterRadius": 110,
                 "clusterProperties": {
                     "age": ["+", ["get", "test_data_AGE"]],
                     "culture_1": ["+", ["get", "test_data_BIRTH_IR"]],
@@ -314,32 +313,60 @@
         // code for building people-icons
         function createHead(age, culture){
 
-           
-            var svg = '<svg class="picto" version="1.1" id="person" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 160 461.3" enable-background="new 0 0 160 461.3" xml:space="preserve">';
+            //temp
+            const educationValue = 2.24;
+            const unemploymentValue = 1;
+            const haircolorValue = "rgb(7.589041095890411, 7.589041095890411, 7.589041095890411)";
 
-            var torzo = '<path id="torzo" fill="#A59656" d="M136.5,374.4h-115c-6.6,0-12-5.4-12-12v-192c0-6.6,5.4-12,12-12h115c6.6,0,12,5.4,12,12v192 C148.5,369,143.1,374.4,136.5,374.4z"/>';
-
-            var skull = '<ellipse id="skull" fill="#F9DBBD" cx="79.3" cy="98.9" rx="69.5" ry="69.6"/>';
-            var nose = '<path id="nose" opacity="0.54" fill="none" stroke="#C19167" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" d="M75.6,90.9c0,0,17.9,29.1,7.9,29.1c-4,0-9.5,0-9.5,0"/>';
-
-	        var eye_l = '<circle id="eye_left" fill="#848484" cx="47.9" cy="90.3" r="3.9"/>';
-            var eye_r = '<circle id="eye_x5F_right" fill="#848484" cx="105.9" cy="90.3" r="3.9"/>';
+            const svg = '<svg class="picto" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 123.4 145.4" enable-background="new 0 0 123.4 145.4" xml:space="preserve">';
             
-            var mouth = '<line id="mouth" opacity="0.54" fill="none" stroke="#C19167" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="63" y1="141" x2="95" y2="141"/>';
+            const body = '<path id="body" fill="#3A9152" d="M2,144v-21.2C2,81.5,40.9,87,40.9,87h43.3c0,0,37.8-5.5,37.8,35.8V144H2z"/>';
+
+            const collar = '<g id="collar"><path fill="#BFC0C1" d="M40.4,80.2l-5.6,4.7l13.5,22.9L64,91.7C64,91.7,48.8,91.4,40.4,80.2z"/><path fill="#BFC0C1" d="M87.2,80.2l5.6,4.7l-13.5,22.9L63.7,91.7C63.7,91.7,78.8,91.4,87.2,80.2z"/></g>';
+
+            const face = '<ellipse id="face" fill="#D1C2A7" cx="64.1" cy="49.9" rx="34.7" ry="42.3"/>';
+
+            const cheeks = '<g id="cheeks"><ellipse transform="matrix(0.9643 0.2647 -0.2647 0.9643 17.95 -9.2169)" opacity="0.5" fill="#F4A2BC" cx="43.2" cy="62" rx="9.4" ry="8"/><ellipse transform="matrix(-0.9643 0.2647 -0.2647 -0.9643 183.7259 99.2443)" opacity="0.5" fill="#F4A2BC" cx="85.2" cy="62" rx="9.4" ry="8"/></g>'
+
+            const beard = '<g id="beard" opacity="'+ unemploymentValue +'"><circle fill="#848484" cx="39.8" cy="76.8" r="0.7"/><circle fill="#848484" cx="43.8" cy="76.8" r="0.7"/><circle fill="#848484" cx="43.8" cy="80.8" r="0.7"/><circle fill="#848484" cx="47.8" cy="77.8" r="0.7"/><circle fill="#848484" cx="48.8" cy="73.8" r="0.7"/><circle fill="#848484" cx="51.8" cy="77.8" r="0.7"/><circle fill="#848484" cx="48.8" cy="81.8" r="0.7"/><circle fill="#848484" cx="53.8" cy="81.8" r="0.7"/><circle fill="#848484" cx="50.8" cy="84.8" r="0.7"/><circle fill="#848484" cx="55.8" cy="84.8" r="0.7"/><circle fill="#848484" cx="55.8" cy="87.8" r="0.7"/><circle fill="#848484" cx="59.8" cy="85.8" r="0.7"/><circle fill="#848484" cx="61.8" cy="89.8" r="0.7"/><circle fill="#848484" cx="40.8" cy="72.8" r="0.7"/><circle fill="#848484" cx="36.8" cy="70.8" r="0.7"/><circle fill="#848484" cx="63.8" cy="86.8" r="0.7"/><circle fill="#848484" cx="86.8" cy="77.8" r="0.7"/><circle fill="#848484" cx="82.8" cy="77.8" r="0.7"/><circle fill="#848484" cx="82.8" cy="81.8" r="0.7"/><circle fill="#848484" cx="78.8" cy="78.8" r="0.7"/><circle fill="#848484" cx="77.8" cy="74.8" r="0.7"/><circle fill="#848484" cx="74.8" cy="78.8" r="0.7"/><circle fill="#848484" cx="77.8" cy="82.8" r="0.7"/><circle fill="#848484" cx="72.8" cy="82.8" r="0.7"/><circle fill="#848484" cx="75.8" cy="85.8" r="0.7"/><circle fill="#848484" cx="70.8" cy="85.8" r="0.7"/><circle fill="#848484" cx="70.8" cy="88.8" r="0.7"/><circle fill="#848484" cx="66.8" cy="86.8" r="0.7"/><circle fill="#848484" cx="64.8" cy="90.8" r="0.7"/><circle fill="#848484" cx="85.8" cy="73.8" r="0.7"/><circle fill="#848484" cx="89.8" cy="71.8" r="0.7"/><circle fill="#848484" cx="92.8" cy="68.8" r="0.7"/></g>'
+
+            const eyes = '<g id="eyes"><circle id="eye_x5F_l_4_" fill="#6D6D6D" cx="51.8" cy="49.8" r="'+ educationValue +'"/><circle id="eye_x5F_r_4_" fill="#6D6D6D" cx="76.8" cy="49.8" r="'+ educationValue +'"/></g>';
+
+            const eyeBags = '<g id="eyeBags"><path id="bag_x5F_l_6_" opacity="0.6" fill="none" stroke="#6D6D6D" stroke-width="0.5" stroke-miterlimit="10" d="m56.6,49.7 c 0,2.6 -2.2,4.9 -4.9,4.9 -2.7,0 -4.9,-2.3 -4.9,-4.9"/><path id="bag_x5F_r_4_" opacity="0.6" fill="none" stroke="#6D6D6D" stroke-width="0.5" stroke-miterlimit="10" d="M81.7,49.7 c0,2.6-2.2,4.9-4.9,4.9c-2.7,0-4.9-2.3-4.9-4.9"/></g>';
+
+            const mouth = '<path id="mouth" opacity="0.6" fill="#6D6D6D" d="M75.5,72c0,6-5.1,11.3-11.3,11.3S52.9,78,52.9,72H75.5z"/>';
+
+            const hair = '<path id="hair" fill="'+ haircolorValue +'" d="M45.8,25.9c0,0,10.7,7.2,18.3,9.4c7.6,2.2,21.1,5.3,25.2,7.3c3.9,1.9,5.9,5.2,7.1,9.1 c1.2,4.1,1.5,8.1,1.5,8.1s3.4-4.1,4.4-11.5c1.4-10.3,3.1-36.5-20.6-44.2S45.9,8.7,45.9,8.7s-10.6-1-17.3,13.7 c-3.6,8.1-3.9,15.1-2.9,23.3c0.9,7.9,4.5,13.4,4.5,13.4S35.1,34.8,45.8,25.9z"/>';
+
+
+            
+
+           
+            // var svg = '<svg class="picto" version="1.1" id="person" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 160 461.3" enable-background="new 0 0 160 461.3" xml:space="preserve">';
+
+            // var torzo = '<path id="torzo" fill="#A59656" d="M136.5,374.4h-115c-6.6,0-12-5.4-12-12v-192c0-6.6,5.4-12,12-12h115c6.6,0,12,5.4,12,12v192 C148.5,369,143.1,374.4,136.5,374.4z"/>';
+
+            // var skull = '<ellipse id="skull" fill="#F9DBBD" cx="79.3" cy="98.9" rx="69.5" ry="69.6"/>';
+            // var nose = '<path id="nose" opacity="0.54" fill="none" stroke="#C19167" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" d="M75.6,90.9c0,0,17.9,29.1,7.9,29.1c-4,0-9.5,0-9.5,0"/>';
+
+	        // var eye_l = '<circle id="eye_left" fill="#848484" cx="47.9" cy="90.3" r="3.9"/>';
+            // var eye_r = '<circle id="eye_x5F_right" fill="#848484" cx="105.9" cy="90.3" r="3.9"/>';
+            
+            // var mouth = '<line id="mouth" opacity="0.54" fill="none" stroke="#C19167" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="63" y1="141" x2="95" y2="141"/>';
     
-            var hair = '<polygon id="hair" fill="' + hair_color(age) + '" points="44.7,26.8 25.9,32.1 35.4,39.9 16,50 22.3,58 0,76 22,76 53,62 77.3,65 99,58 114,58 140.8,76 160,85 139,56 160,48 129,40.9 153,32 114,32 120,18 99,28 80,18 83.5,32.3 60,13 60,32 41,4 	"/>';
+            // var hair = '<polygon id="hair" fill="' + hair_color(age) + '" points="44.7,26.8 25.9,32.1 35.4,39.9 16,50 22.3,58 0,76 22,76 53,62 77.3,65 99,58 114,58 140.8,76 160,85 139,56 160,48 129,40.9 153,32 114,32 120,18 99,28 80,18 83.5,32.3 60,13 60,32 41,4 	"/>';
 
-            var leg_l = '<rect id="leg_left" x="37.3" y="374.4" fill="#A59656" width="25.7" height="87"/>';
-            var leg_r = '<rect id="leg_x5F_right" x="95" y="374.4" fill="#A59656" width="25.7" height="87"/>';
+            // var leg_l = '<rect id="leg_left" x="37.3" y="374.4" fill="#A59656" width="25.7" height="87"/>';
+            // var leg_r = '<rect id="leg_x5F_right" x="95" y="374.4" fill="#A59656" width="25.7" height="87"/>';
 
-            var front = bar_chart(culture);
+            // var front = bar_chart(culture);
 
-            //</svg>
+            // //</svg>
 
-            var html = '<svg class="picto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 150"><path d="m 22.89792,1.4650345 c 2.42219,-1.95337934 5.860138,-1.95337934 8.282328,0 2.031515,1.6408387 3.984894,4.2974346 3.984894,8.516734 0,8.5948695 -2.42219,16.9553325 -2.42219,16.9553325 h 11.720276 c 0,0 6.016408,0.937622 6.016408,7.422842 v 40.63029 c 0,0 0.468811,5.938273 -6.95403,12.423493 l 0.234405,57.820024 c 0,0 4.063029,1.17203 4.063029,4.76625 H 6.1769924 c 0,-3.59422 4.0630286,-4.76625 4.0630286,-4.76625 L 10.474427,87.413726 C 3.0515854,80.928506 3.5203965,74.990233 3.5203965,74.990233 v -40.63029 c 0,-6.48522 6.0164084,-7.422842 6.0164084,-7.422842 H 21.257081 c 0,0 -2.42219,-8.360463 -2.42219,-16.9553325 0.07813,-4.2192994 2.031514,-6.8758953 4.063029,-8.516734 z" style="fill:#1d498f;stroke-width:0.3"/></svg>'
+            // var html = '<svg class="picto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 150"><path d="m 22.89792,1.4650345 c 2.42219,-1.95337934 5.860138,-1.95337934 8.282328,0 2.031515,1.6408387 3.984894,4.2974346 3.984894,8.516734 0,8.5948695 -2.42219,16.9553325 -2.42219,16.9553325 h 11.720276 c 0,0 6.016408,0.937622 6.016408,7.422842 v 40.63029 c 0,0 0.468811,5.938273 -6.95403,12.423493 l 0.234405,57.820024 c 0,0 4.063029,1.17203 4.063029,4.76625 H 6.1769924 c 0,-3.59422 4.0630286,-4.76625 4.0630286,-4.76625 L 10.474427,87.413726 C 3.0515854,80.928506 3.5203965,74.990233 3.5203965,74.990233 v -40.63029 c 0,-6.48522 6.0164084,-7.422842 6.0164084,-7.422842 H 21.257081 c 0,0 -2.42219,-8.360463 -2.42219,-16.9553325 0.07813,-4.2192994 2.031514,-6.8758953 4.063029,-8.516734 z" style="fill:#1d498f;stroke-width:0.3"/></svg>'
 
             var el = document.createElement('div');
-            el.innerHTML = svg + torzo + skull + nose + eye_l + eye_r + mouth + hair + leg_l + leg_r + front + '</svg>';
+            el.innerHTML = svg + body + collar + face + cheeks + beard + eyes + eyeBags + mouth + hair + '</svg>';
             return el.firstChild;
         }
 
