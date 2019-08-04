@@ -106,7 +106,7 @@
             // Add GeoJSON source from GeoJSON file
             map.addSource("smallAreaData", {
                 "type": "geojson",
-                "data": "real_final_data.geojson",
+                "data": "real_final_data.json",
                 "cluster": true,
                 "clusterRadius": 110,
                 "clusterProperties": {
@@ -216,21 +216,26 @@
 
 
                     //if (!props.cluster) continue;
+                    
                     // if it's not a cluster
                     if (!props.cluster) {
 
 
                         //data
-                        var age = props.AVERAGE_AGE;
-                        var birthPlace = [props.test_data_BIRTH_IR, props.test_data_BIRTH_EUR, props.test_data_BIRTH_WOR];
-                        var economy = [props.test_data_ECO_WORK, props.test_data_ECO_UNE, props.test_data_ECO_OTH];
-                        var price = props.test_data_DUMMY_PRICE;
+                        var age = props.Data_test_AVERAGE_AGE;
+                        var birthPlace = props.Data_test_BP_IRL;
+                        var unemp = props.Data_test_ECON_UNE;
+                        var soc = props.Data_test_SOC_CLASS;
+                        var edu = props.Data_test_HIG_EDU;
+                        var commuting = props.Data_test_EYEBAG_INDEX;
+                        var health = props.Data_test_HEALTH;
                         
                         var id = props.OBJECTID;
                         var marker = markers[id];
 
+
                         if (!marker) {
-                            var el = createHead(age, culture);
+                            var el = createPicto(age, birthPlace, unemp, soc, edu, commuting, health);
                             
                             marker = markers[id] = new mapboxgl.Marker({
                                 element: el
@@ -243,16 +248,22 @@
 
                     // if it is a cluster
                     } else {
+                        
                         var id = props.cluster_id;
                         
-                        var average_age = Math.round (props.age / props.point_count_abbreviated);
-                        var fake_culture = [30, 40, 30];
+                        //data
+                        var age = props.Data_test_AVERAGE_AGE;
+                        var birthPlace = props.Data_test_BP_IRL;
+                        var unemp = props.Data_test_ECON_UNE;
+                        var soc = props.Data_test_SOC_CLASS;
+                        var edu = props.Data_test_HIG_EDU;
+                        var commuting = props.Data_test_EYEBAG_INDEX;
+                        var health = props.Data_test_HEALTH;
 
 
                         var marker = markers[id];
                         if (!marker) {
-                            //var el = createDonutChart(props); ///!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            var el = createHead(average_age, fake_culture);
+                            var el = createPicto(age, birthPlace, unemp, soc, edu, commuting, health);
                             marker = markers[id] = new mapboxgl.Marker({
                                 element: el
                             }).setLngLat(coords);
@@ -284,13 +295,12 @@
             });
         });
 
+        
         function hair_color(age){
             var colors = ['#35281D', '#4F3C2D', '#7C5E48', '#A38067', '#C9A88F', '#D8D8D8']
             var result = age >= 60 ? colors[5] : age >= 50 ? colors[4] : age >= 40 ? colors[3] : age >= 30 ? colors[2] : age >= 20 ? colors[1] : colors[0];
             return result;
         };
-
-
 
         function bar_chart(culture){
             var colors = ['#00a128', '#003ba1', '#c202bf']
@@ -311,12 +321,12 @@
 
 
         // code for building people-icons
-        function createHead(age, culture){
+        function createPicto(age, birthPlace, unemp, soc, edu, commuting, health){
 
             //temp
-            const educationValue = 2.24;
-            const unemploymentValue = 1;
-            const haircolorValue = "rgb(7.589041095890411, 7.589041095890411, 7.589041095890411)";
+            const educationValue =  0.21 + edu * 0.07;
+            const unemploymentValue = unemp / 42;
+            const haircolorValue = 'rgb('+ (age-20) *(277/73) +', '+ (age-20)*(277/73) +', '+ (age-20)*(277/73) +')';
 
             const svg = '<svg class="picto" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 123.4 145.4" enable-background="new 0 0 123.4 145.4" xml:space="preserve">';
             
